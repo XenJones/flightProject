@@ -59,15 +59,16 @@ def distance(origin, destination):
     return d
 
 def planRoute(ICAO1, ICAO2):
-    with open('icao.csv', 'r', encoding='utf-8') as csvFile:
-        for row in csvFile:
-            if ICAO1 == row[3]:
-                ICAO1Lat = row[5]
-                ICAO1Long = row[6]
-        for row in csvFile:
-            if ICAO2 == row[3]:
-                ICAO2Lat = row[5]
-                ICAO2Long = row[6]
+    csvFile = open('icao.csv', 'r', encoding='utf-8')
+    f = csv.reader(csvFile)
+    for row in f:
+        if ICAO1 == row[3]:
+            print('fuck you')
+            ICAO1Lat = float(row[5])
+            ICAO1Long = float(row[6])
+        if ICAO2 == row[3]:
+            ICAO2Lat = float(row[5])
+            ICAO2Long = float(row[6])
 
     plane = input('please choose a plane for this route')
     if userDict['ownedAircraft'][plane] > 0:
@@ -77,6 +78,7 @@ def planRoute(ICAO1, ICAO2):
                 for j in data[i].get("Aircraft"):
                     if j.get('model') == plane:
                         planeRange = j.get('range')
+
     routeDistance = distance((ICAO1Lat, ICAO1Long), (ICAO2Lat, ICAO2Long))
     if routeDistance <= planeRange:
         with open('routes.json', 'w') as routesFile:
@@ -160,8 +162,6 @@ if menu == 1:
         }
     }
 
-    saveUserInfo()
-
     os.system('cls')
     # game first steps
     print('you have been given a very generous starting grant of $40,000,000')
@@ -171,6 +171,8 @@ if menu == 1:
     purchaseAircraft(aircraftToPurchase)
     print('Well done, you have just purchased your first aircraft!')
 
+    saveUserInfo()
+
     os.system('cls')
 
     print('lets plan your first route!')
@@ -179,3 +181,5 @@ if menu == 1:
     ICAO1 = input('please enter the ICAO of your first airport')
     ICAO2 = input('please enter the ICAO of your second airport')
     planRoute(ICAO1, ICAO2)
+    print('Well done, you just planned your first route, we are now going to return you to the main menu.')
+    print('From there, you can begin to fly routes and earn money, good luck and have fun!')
