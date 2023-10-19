@@ -6,19 +6,22 @@
       "model" : "A320neo",
       "price" : 100600000,
       "range" : 3750,
-      "passengers" : 160
+      "passengers" : 160,
+      "speed" : 0.78
     },
     {
       "model" : "A321",
       "price" : 114900000,
       "range" : 4000,
-      "passengers" : 244
+      "passengers" : 244,
+      "speed" : 0.78
     },
     {
       "model" : "A330-300",
       "price" : 256400000,
       "range" : 6350,
-      "passengers" : 277
+      "passengers" : 277,
+      "speed" : 0.82
     }
   ]
 },
@@ -29,25 +32,29 @@
       "model" : "737-800",
       "price" : 106100000,
       "range" : 4000,
-      "passengers" : 189
+      "passengers" : 189,
+      "speed" : 0.77
     },
     {
       "model" : "737-900ER",
       "price" : 112600000,
       "range" : 3200,
-      "passengers" : 220
+      "passengers" : 220,
+      "speed" : 0.69
     },
     {
       "model" : "747-400",
       "price" : 418400000,
       "range" : 416,
-      "passengers" : 7285
+      "passengers" : 7285,
+      "speed" : 0.86
     },
     {
       "model" : "777-200LR",
       "price" : 352300000,
       "range" : 8555,
-      "passengers" : 368
+      "passengers" : 368,
+      "speed" : 0.84
     }
   ]
 },
@@ -58,13 +65,15 @@
       "model" : "CRJ200",
       "price" : 21000000,
       "range" : 1700,
-      "passengers" : 50
+      "passengers" : 50,
+      "speed" : 0.74
     },
     {
       "model" : "CRJ900",
       "price" : 42000000,
       "range" : 1553,
-      "passengers" : 90
+      "passengers" : 90,
+      "speed" : 0.83
     }
   ]
 },
@@ -75,7 +84,8 @@
       "model" : "E-175",
       "price" : 28000000,
       "range" : 2200,
-      "passengers" : 88
+      "passengers" : 88,
+      "speed" : 0.7
     }
   ]
 }

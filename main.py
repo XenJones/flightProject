@@ -36,8 +36,15 @@ def purchaseAircraft(name):
                     if j.get("model") == name:
                         userDict['money'] -= j.get("price")
                         print(f"you have bought {j.get('model')}, for {j.get('price')}")
-                        userDict['ownedAircraft'][name] +=1
-                        print(userDict)
+                        aircraftName = input("please give your aircraft a UNIQUE name")
+                        with open('ownedAircraft.json', 'a') as jsonFile:
+                            jsonObject = json.dumps({
+                                'name' : aircraftName,
+                                'model' : j.get('model'),
+                                'hours' : 300,
+                            })
+                            jsonFile.write(jsonObject)
+
 
 def saveUserInfo():
     with open('userInfo.json', 'w') as jsonFile:
@@ -71,7 +78,9 @@ def planRoute(ICAO1, ICAO2):
             ICAO2Long = float(row[6])
 
     plane = input('please choose a plane for this route')
-    if userDict['ownedAircraft'][plane] > 0:
+    with open('ownedAircraft.json', 'r') as f:
+        for i in f:
+
         with open('aircraftInfo.json', 'r') as jsonFile:
             data = json.load(jsonFile)
             for i in range(len(data)):
@@ -85,6 +94,22 @@ def planRoute(ICAO1, ICAO2):
             routeDict = {'ICAO1': ICAO1, 'ICAO2' : ICAO2, 'length' : routeDistance, 'plane' : plane}
             data = json.dumps(routeDict)
             routesFile.write(data)
+
+def mainMenu():
+    menu = 1000
+    while menu !=0:
+        menu = int(input(
+            """Please pick an option: 
+            0: exit the game
+            1: Check finances
+            2: Buy an aircraft
+            3: Perform maintenance
+            4: Plan routes
+            5: Depart Aircraft
+            6: Save Game
+            7: Save and exit
+            """
+        ))
 
 # startup menu
 print(
@@ -147,19 +172,7 @@ if menu == 1:
         'userpass': userPass,
         'hubAirport': hubAirport,
         'money': 40000000,
-        'ownedAircraft': {
-            "A320neo": 0,
-            "A321": 0,
-            "A330-300": 0,
-            "737-800": 0,
-            "737-900ER": 0,
-            "747-400": 0,
-            "777-200LR": 0,
-            "CRJ200": 0,
-            "CRJ900": 0,
-            "E175": 0
 
-        }
     }
 
     os.system('cls')
