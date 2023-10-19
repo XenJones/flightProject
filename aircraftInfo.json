@@ -1,0 +1,82 @@
+[
+{
+  "Manufacturer" : "Airbus",
+  "Aircraft" : [
+    {
+      "model" : "A320neo",
+      "price" : 100600000,
+      "range" : 3750,
+      "passengers" : 160
+    },
+    {
+      "model" : "A321",
+      "price" : 114900000,
+      "range" : 4000,
+      "passengers" : 244
+    },
+    {
+      "model" : "A330-300",
+      "price" : 256400000,
+      "range" : 6350,
+      "passengers" : 277
+    }
+  ]
+},
+{
+  "Manufacturer" : "Boeing",
+  "Aircraft" : [
+    {
+      "model" : "737-800",
+      "price" : 106100000,
+      "range" : 4000,
+      "passengers" : 189
+    },
+    {
+      "model" : "737-900ER",
+      "price" : 112600000,
+      "range" : 3200,
+      "passengers" : 220
+    },
+    {
+      "model" : "747-400",
+      "price" : 418400000,
+      "range" : 416,
+      "passengers" : 7285
+    },
+    {
+      "model" : "777-200LR",
+      "price" : 352300000,
+      "range" : 8555,
+      "passengers" : 368
+    }
+  ]
+},
+{
+  "Manufacturer" : "Bombardier",
+  "Aircraft" : [
+    {
+      "model" : "CRJ200",
+      "price" : 21000000,
+      "range" : 1700,
+      "passengers" : 50
+    },
+    {
+      "model" : "CRJ900",
+      "price" : 42000000,
+      "range" : 1553,
+      "passengers" : 90
+    }
+  ]
+},
+{
+  "Manufacturer" : "Embraer",
+  "Aircraft" : [
+    {
+      "model" : "E-175",
+      "price" : 28000000,
+      "range" : 2200,
+      "passengers" : 88
+    }
+  ]
+}
+  ]
