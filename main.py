@@ -134,8 +134,6 @@ def mainMenu():
             3: Perform maintenance
             4: Plan routes
             5: Depart Aircraft
-            6: Save Game
-            7: Save and exit
             """
         ))
         if menu == 1:
@@ -311,3 +309,7 @@ elif menu == 2:
     with open('userInfo.json', 'r') as jsonFile:
         userDict = json.load(jsonFile)
     mainMenu()
+elif menu == 0:
+    print('Exiting')
+else:
+    print('Read the instructions, you have just exited!')
