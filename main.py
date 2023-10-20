@@ -77,9 +77,9 @@ def planRoute(ICAO1, ICAO2):
             ICAO2Long = float(row[6])
 
     plane = input('please choose a plane model for this route')
-    with open('ownedAircraft.json', 'r') as f:
+    with open('aircraftInfo.json', 'r') as f:
         for i in f:
-            with open('ownedAircraft.json', 'r') as jsonFile:
+            with open('aircraftInfo.json', 'r') as jsonFile:
                 data = json.load(jsonFile)
                 for i in range(len(data)):
                     for j in data[i].get("Aircraft"):
@@ -88,16 +88,38 @@ def planRoute(ICAO1, ICAO2):
 
     routeDistance = distance((ICAO1Lat, ICAO1Long), (ICAO2Lat, ICAO2Long))
     if routeDistance <= planeRange:
-        with open('routes.jsonl', 'w') as routesFile:
+        with open('routes.jsonl', 'a') as routesFile:
             routeDict = {'ICAO1': ICAO1, 'ICAO2' : ICAO2, 'length' : routeDistance, 'plane' : plane}
             data = json.dumps(routeDict)
-            routesFile.write(data)
+            routesFile.write(data + '\n')
 
 def aircraftCheck():
     with open('ownedAircraft.json', 'r') as jsonFile:
         jsonList = list(jsonFile)
     for jsonStr in jsonList:
         print(jsonStr.strip())
+
+
+def timeCalculation(aircraft, distance):
+    with open('aircraftInfo.json', 'r') as jsonFile:
+        data = json.load(jsonFile)
+        for i in range(len(data)):
+            for j in data[i].get("Aircraft"):
+                if j['model'] == aircraft:
+                    airSpeed = j['speed']
+
+        airSpeedKts = airSpeed * 666.739
+        time = distance / airSpeedKts
+        return time + 0.5
+
+def rndPax(aircraft):
+    with open('aircraftInfo.json', 'r') as jsonFile:
+        data = json.load(jsonFile)
+        for i in data:
+            for j in i['Aircraft']:
+                if j['model'] == aircraft:
+                    pax = j['passengers']
+                    return random.randint(round((pax - pax/3), 0), pax)
 
 def mainMenu():
     with open('userInfo.json', 'r') as jsonFile:
@@ -163,7 +185,42 @@ def mainMenu():
             planRoute(ICAO1, ICAO2)
 
         elif menu == 5:
-            print('choose a route to fly')
+            print('you can choose from the following routes to fly:')
+            with jsonlines.open('routes.jsonl', 'r') as jsonFile:
+                jsonList = list(jsonFile)
+                for i in jsonList:
+                    print(i)
+            routeChoice = (input('Please enter the first and second ICAO as well as the plane model seperated by commas'))
+            routeChoiceList = routeChoice.replace(' ', '').split(',')
+            for i in jsonList:
+                if i['ICAO1'] == routeChoiceList[0] and i['ICAO2'] == routeChoiceList[1] and i['plane'] == routeChoiceList[2]:
+                    time = timeCalculation(i['plane'], i['length'])
+                    print(f'your flight will take {round(time, 2)} hours or {round((time * 60), 2)} minutes')
+                    print('choose an aircraft for this flight: ')
+                    with open('ownedAircraft.json', 'r') as jsonFile:
+                        data = json.load(jsonFile)
+                        jsonList = list(data)
+                        for j in jsonList:
+                            if j['model'] == i['plane']:
+                                print(j)
+                        aircraftChoice = input('choose the aircraft NAME from this list')
+                        for k in jsonList:
+                            if k['name'] == aircraftChoice:
+                                planeDict = k
+
+                        planeDict['hours'] -= round(time,2)
+
+                    data[data.index(planeDict)]['hours'] = planeDict['hours']
+
+                    open('ownedAircraft.json', 'w').close()
+                    with open('ownedAircraft.json', 'w') as jsonFile:
+                        json.dump(data, jsonFile)
+
+                    fare = 50 + (i['length'] * 0.11)
+                    moneyIn = rndPax(i['plane']) * fare
+                    userDict['money'] += moneyIn
+                    saveUserInfo(userDict)
+                    print(f'Well done, you have earnt {moneyIn}')
 # startup menu
 print(
     '''Welcome to the game!
