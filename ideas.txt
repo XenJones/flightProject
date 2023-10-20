@@ -1,0 +1,17 @@
+Conseptualisation:
+	For this program, I wanted to create an airline manager game
+	I wanted to add functionality for the following:
+		Check finances
+		Buy aircraft
+		Perform maintainence
+		Plan routes
+		Fly routes
+	
+Testing and debugging:
+	During the development of this program, i have encountered may issues, including the following:
+		Issues with packages
+		Issues with writing and files
+		Logic errors
+
+	I fixed all of these using different mehods, and now the program runs effieciently
+	
