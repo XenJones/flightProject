@@ -30,7 +30,7 @@ def affordAircraft():
 global forceBreak
 
 def purchaseAircraft(name):
-    with open("aircraftInfo.json", "r+") as aircraftInfo:
+    with open("aircraftInfo.json", "r") as aircraftInfo:
         data = json.load(aircraftInfo)
         for i in range(len(data)):
             for j in data[i].get("Aircraft"):
@@ -38,13 +38,19 @@ def purchaseAircraft(name):
                     userDict['money'] -= j.get("price")
                     print(f"you have bought {j.get('model')}, for {j.get('price')}")
                     aircraftName = input("please give your aircraft a UNIQUE name")
-                    with open('ownedAircraft.json', 'a') as jsonFile:
-                        jsonObject = json.dumps({
-                            'name' : aircraftName,
-                            'model' : j.get('model'),
-                            'hours' : 300,
-                        })
-                        jsonFile.write(jsonObject + '\n')
+                    saveUserInfo(userDict)
+    with open('ownedAircraft.json', 'r') as jsonFile:
+        data = json.load(jsonFile)
+        jsonObject = {
+            'name' : aircraftName,
+            'model' : j.get('model'),
+            'hours' : 300,
+        }
+        data.append(jsonObject)
+    open('ownedAircraft.json', 'w').close()
+    with open('ownedAircraft.json', 'w') as jsonFile:
+        writeData = json.dumps(data)
+        jsonFile.write(writeData)
 
 def saveUserInfo(userDict):
     with open('userInfo.json', 'w') as jsonFile:
@@ -99,7 +105,6 @@ def aircraftCheck():
     for jsonStr in jsonList:
         print(jsonStr.strip())
 
-
 def timeCalculation(aircraft, distance):
     with open('aircraftInfo.json', 'r') as jsonFile:
         data = json.load(jsonFile)
@@ -119,7 +124,7 @@ def rndPax(aircraft):
             for j in i['Aircraft']:
                 if j['model'] == aircraft:
                     pax = j['passengers']
-                    return random.randint(round((pax - pax/3), 0), pax)
+                    return random.randint((pax - pax//3), pax)
 
 def mainMenu():
     with open('userInfo.json', 'r') as jsonFile:
