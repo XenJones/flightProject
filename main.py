@@ -76,9 +76,15 @@ def planRoute(ICAO1, ICAO2):
             ICAO2Lat = float(row[5])
             ICAO2Long = float(row[6])
 
-    plane = input('please choose a plane for this route')
+    plane = input('please choose a plane model for this route')
     with open('ownedAircraft.json', 'r') as f:
-
+        for i in f:
+            with open('ownedAircraft.json', 'r') as jsonFile:
+                data = json.load(jsonFile)
+                for i in range(len(data)):
+                    for j in data[i].get("Aircraft"):
+                        if j.get('model') == plane:
+                            planeRange = j.get('range')
 
     routeDistance = distance((ICAO1Lat, ICAO1Long), (ICAO2Lat, ICAO2Long))
     if routeDistance <= planeRange:
@@ -152,8 +158,12 @@ def mainMenu():
                 json.dump(data, jsonFile)
 
         elif menu == 4:
+            ICAO1 = input('enter the ICAO of the first airport')
+            ICAO2 = input('enter the ICAO of the second airport')
+            planRoute(ICAO1, ICAO2)
 
-
+        elif menu == 5:
+            print('choose a route to fly')
 # startup menu
 print(
     '''Welcome to the game!
