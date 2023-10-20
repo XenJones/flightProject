@@ -4,6 +4,7 @@ import json
 import csv
 import random
 import math
+import jsonlines
 
 def icaoSearch():
     airport = input('What airport do you want to search for?').upper()
@@ -26,27 +27,26 @@ def affordAircraft():
                 if j.get("price") < userDict.get("money"):
                     print(j)
 
+global forceBreak
 
 def purchaseAircraft(name):
     with open("aircraftInfo.json", "r+") as aircraftInfo:
         data = json.load(aircraftInfo)
         for i in range(len(data)):
             for j in data[i].get("Aircraft"):
-                if j.get("price") < userDict.get("money"):
-                    if j.get("model") == name:
-                        userDict['money'] -= j.get("price")
-                        print(f"you have bought {j.get('model')}, for {j.get('price')}")
-                        aircraftName = input("please give your aircraft a UNIQUE name")
-                        with open('ownedAircraft.json', 'a') as jsonFile:
-                            jsonObject = json.dumps({
-                                'name' : aircraftName,
-                                'model' : j.get('model'),
-                                'hours' : 300,
-                            })
-                            jsonFile.write(jsonObject)
+                if j.get("price") < userDict.get("money") and j.get('model') == name:
+                    userDict['money'] -= j.get("price")
+                    print(f"you have bought {j.get('model')}, for {j.get('price')}")
+                    aircraftName = input("please give your aircraft a UNIQUE name")
+                    with open('ownedAircraft.json', 'a') as jsonFile:
+                        jsonObject = json.dumps({
+                            'name' : aircraftName,
+                            'model' : j.get('model'),
+                            'hours' : 300,
+                        })
+                        jsonFile.write(jsonObject + '\n')
 
-
-def saveUserInfo():
+def saveUserInfo(userDict):
     with open('userInfo.json', 'w') as jsonFile:
         jsonObject = json.dumps(userDict)
         jsonFile.write(jsonObject)
@@ -70,7 +70,6 @@ def planRoute(ICAO1, ICAO2):
     f = csv.reader(csvFile)
     for row in f:
         if ICAO1 == row[3]:
-            print('fuck you')
             ICAO1Lat = float(row[5])
             ICAO1Long = float(row[6])
         if ICAO2 == row[3]:
@@ -79,23 +78,24 @@ def planRoute(ICAO1, ICAO2):
 
     plane = input('please choose a plane for this route')
     with open('ownedAircraft.json', 'r') as f:
-        for i in f:
 
-        with open('aircraftInfo.json', 'r') as jsonFile:
-            data = json.load(jsonFile)
-            for i in range(len(data)):
-                for j in data[i].get("Aircraft"):
-                    if j.get('model') == plane:
-                        planeRange = j.get('range')
 
     routeDistance = distance((ICAO1Lat, ICAO1Long), (ICAO2Lat, ICAO2Long))
     if routeDistance <= planeRange:
-        with open('routes.json', 'w') as routesFile:
+        with open('routes.jsonl', 'w') as routesFile:
             routeDict = {'ICAO1': ICAO1, 'ICAO2' : ICAO2, 'length' : routeDistance, 'plane' : plane}
             data = json.dumps(routeDict)
             routesFile.write(data)
 
+def aircraftCheck():
+    with open('ownedAircraft.json', 'r') as jsonFile:
+        jsonList = list(jsonFile)
+    for jsonStr in jsonList:
+        print(jsonStr.strip())
+
 def mainMenu():
+    with open('userInfo.json', 'r') as jsonFile:
+        userDict = json.load(jsonFile)
     menu = 1000
     while menu !=0:
         menu = int(input(
@@ -110,6 +110,49 @@ def mainMenu():
             7: Save and exit
             """
         ))
+        if menu == 1:
+            with open('userInfo.json', 'r') as jsonFile:
+                data = json.load(jsonFile)
+                print(data['money'])
+
+        elif menu == 2:
+            print('you can afford the following aircraft:')
+            affordAircraft()
+            name = input('What aircraft do you want to buy')
+            purchaseAircraft(name)
+
+        elif menu == 3:
+            aircraftCheck()
+            aircraftMaintain = input('pick an aircraft to maintain')
+            with open('ownedAircraft.json', 'r+') as jsonFile:
+                data = json.load(jsonFile)
+                for planeDict in data:
+                    if (planeDict.get('name')) == aircraftMaintain:
+                        print(planeDict.get('name'))
+                        print('Maintenance costs $1000 per hour added')
+                        if planeDict.get('hours') == 300:
+                            print('you already have the maximum hours on this plane, you cannot perform maintenance!')
+                        else:
+                            print(f'this aircraft has {planeDict.get("hours")} left before maintenance required')
+                            hoursToAdd = input('How many hours would you like to add, input fill to add the maximum')
+                            if hoursToAdd == 'fill' or int(hoursToAdd) + planeDict['hours'] > 300:
+                                print('Filling hours to the max!')
+                                hours = 300 - int(planeDict.get('hours'))
+                                planeDict['hours'] = 300
+                                finalMoney = userDict.get('money') - (hours * 1000)
+                                userDict['money'] = finalMoney
+                            else:
+                                planeDict['hours'] += int(hoursToAdd)
+                                finalMoney = userDict.get('money') - (int(hoursToAdd) * 1000)
+                                userDict['money'] = finalMoney
+                        data[data.index(planeDict)]['hours'] = planeDict['hours']
+                        saveUserInfo(userDict)
+            open('ownedAircraft.json', 'w').close()
+            with open('ownedAircraft.json', 'w') as jsonFile:
+                json.dump(data, jsonFile)
+
+        elif menu == 4:
+
 
 # startup menu
 print(
@@ -184,7 +227,7 @@ if menu == 1:
     purchaseAircraft(aircraftToPurchase)
     print('Well done, you have just purchased your first aircraft!')
 
-    saveUserInfo()
+    saveUserInfo(userDict)
 
     os.system('cls')
 
@@ -196,3 +239,8 @@ if menu == 1:
     planRoute(ICAO1, ICAO2)
     print('Well done, you just planned your first route, we are now going to return you to the main menu.')
     print('From there, you can begin to fly routes and earn money, good luck and have fun!')
+
+elif menu == 2:
+    with open('userInfo.json', 'r') as jsonFile:
+        userDict = json.load(jsonFile)
+    mainMenu()
